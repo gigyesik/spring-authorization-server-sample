@@ -1,9 +1,13 @@
+server:
+  port: 8090
+
 logging:
   level:
-    root: info
-    org.springframework.web: info
-    org.springframework.security: info
-    org.springframework.security.oauth2: info
+    root: INFO
+    org.springframework.web: INFO
+    org.springframework.security: INFO
+    org.springframework.security.oauth2: INFO
+#    org.springframework.boot.autoconfigure: DEBUG
 
 spring:
   security:
