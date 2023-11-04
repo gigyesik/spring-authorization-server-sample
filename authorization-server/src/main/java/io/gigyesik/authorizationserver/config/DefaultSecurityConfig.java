@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.core.userdetails.User;
@@ -38,14 +37,14 @@ public class DefaultSecurityConfig {
                                 .anyRequest().authenticated()
                 )
                 .csrf(csrf -> csrf.ignoringRequestMatchers(new AntPathRequestMatcher("/h2-console/**")))
-//                .formLogin(formLogin ->
-//                        formLogin
-//                                .loginPage("/login")
-//                )
-//                .headers(header ->
-//                        header
-//                                .addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))
-//                )
+                .formLogin(formLogin ->
+                        formLogin
+                                .loginPage("/login")
+                )
+                .headers(header ->
+                        header
+                                .addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))
+                )
                 .oauth2Login(oauth2Login ->
                         oauth2Login
                                 .loginPage("/login")
