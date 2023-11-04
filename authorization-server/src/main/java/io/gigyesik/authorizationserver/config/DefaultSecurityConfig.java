@@ -37,7 +37,7 @@ public class DefaultSecurityConfig {
                                 .permitAll()
                                 .anyRequest().authenticated()
                 )
-//                .csrf(csrf -> csrf.ignoringRequestMatchers(new AntPathRequestMatcher("/h2-console/**")))
+                .csrf(csrf -> csrf.ignoringRequestMatchers(new AntPathRequestMatcher("/h2-console/**")))
 //                .formLogin(formLogin ->
 //                        formLogin
 //                                .loginPage("/login")
