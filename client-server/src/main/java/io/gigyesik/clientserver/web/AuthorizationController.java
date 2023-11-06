@@ -76,11 +76,6 @@ public class AuthorizationController {
         return "index";
     }
 
-    @GetMapping(value = "/authorize", params = "grant_type=device_code")
-    public String deviceCodeGrant() {
-        return "device-activate";
-    }
-
     @ExceptionHandler(WebClientResponseException.class)
     public String handleError(Model model, WebClientResponseException ex) {
         model.addAttribute("error", ex.getMessage());

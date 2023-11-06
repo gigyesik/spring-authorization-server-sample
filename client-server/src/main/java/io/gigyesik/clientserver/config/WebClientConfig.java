@@ -1,6 +1,5 @@
 package io.gigyesik.clientserver.config;
 
-import io.gigyesik.clientserver.authorization.DeviceCodeOAuth2AuthorizedClientProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
@@ -36,15 +35,11 @@ public class WebClientConfig {
                         .authorizationCode()
                         .refreshToken()
                         .clientCredentials()
-                        .provider(new DeviceCodeOAuth2AuthorizedClientProvider())
                         .build();
 
         DefaultOAuth2AuthorizedClientManager authorizedClientManager = new DefaultOAuth2AuthorizedClientManager(
                 clientRegistrationRepository, authorizedClientRepository);
         authorizedClientManager.setAuthorizedClientProvider(authorizedClientProvider);
-
-        authorizedClientManager.setContextAttributesMapper(DeviceCodeOAuth2AuthorizedClientProvider
-                .deviceCodeContextAttributesMapper());
 
         return authorizedClientManager;
     }

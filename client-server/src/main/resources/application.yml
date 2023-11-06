@@ -38,13 +38,6 @@ spring:
             authorization-grant-type: client_credentials
             scope: message.read,message.write
             client-name: messaging-client-client-credentials
-          messaging-client-device-code:
-            provider: spring
-            client-id: device-messaging-client
-            client-authentication-method: none
-            authorization-grant-type: urn:ietf:params:oauth:grant-type:device_code
-            scope: message.read,message.write
-            client-name: messaging-client-device-code
         provider:
           spring:
             issuer-uri: http://localhost:9000
