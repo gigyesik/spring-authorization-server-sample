@@ -11,6 +11,12 @@ spring:
     driver-class-name: org.h2.Driver
     username: sa
     password:
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create
   security:
     oauth2:
       client:
