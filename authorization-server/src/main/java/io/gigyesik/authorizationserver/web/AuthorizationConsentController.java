@@ -66,11 +66,9 @@ public class AuthorizationConsentController {
         model.addAttribute("previouslyApprovedScopes", withDescription(previouslyApprovedScopes));
         model.addAttribute("principalName", principal.getName());
         model.addAttribute("userCode", userCode);
-        if (StringUtils.hasText(userCode)) {
-            model.addAttribute("requestURI", "/oauth2/device_verification");
-        } else {
-            model.addAttribute("requestURI", "/oauth2/authorize");
-        }
+
+        model.addAttribute("requestURI", "/oauth2/authorize");
+
 
         return "consent";
     }

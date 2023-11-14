@@ -4,7 +4,6 @@ import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
-import io.gigyesik.authorizationserver.authentication.DeviceClientAuthenticationProvider;
 import io.gigyesik.authorizationserver.federation.FederatedIdentityIdTokenCustomizer;
 import io.gigyesik.authorizationserver.jose.Jwks;
 import org.springframework.context.annotation.Bean;
@@ -54,32 +53,18 @@ public class AuthorizationServerConfig {
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
     public SecurityFilterChain authorizationServerSecurityFilterChain(
-            HttpSecurity http, RegisteredClientRepository registeredClientRepository,
+            HttpSecurity http,
+            RegisteredClientRepository registeredClientRepository,
             AuthorizationServerSettings authorizationServerSettings) throws Exception {
 
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
 
-        DeviceClientAuthenticationProvider deviceClientAuthenticationProvider =
-                new DeviceClientAuthenticationProvider(registeredClientRepository);
-
 
         http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
-                .deviceAuthorizationEndpoint(deviceAuthorizationEndpoint ->
-                        deviceAuthorizationEndpoint.verificationUri("/activate")
-                )
-                .deviceVerificationEndpoint(deviceVerificationEndpoint ->
-                        deviceVerificationEndpoint.consentPage(CUSTOM_CONSENT_PAGE_URI)
-                )
-                .clientAuthentication(clientAuthentication ->
-                        clientAuthentication
-                                .authenticationProvider(deviceClientAuthenticationProvider)
-                )
                 .authorizationEndpoint(authorizationEndpoint ->
                         authorizationEndpoint.consentPage(CUSTOM_CONSENT_PAGE_URI))
                 .oidc(Customizer.withDefaults());	// Enable OpenID Connect 1.0
-        // @formatter:on
 
-        // @formatter:off
         http
                 .exceptionHandling((exceptions) -> exceptions
                         .defaultAuthenticationEntryPointFor(
@@ -89,11 +74,30 @@ public class AuthorizationServerConfig {
                 )
                 .oauth2ResourceServer(oauth2ResourceServer ->
                         oauth2ResourceServer.jwt(Customizer.withDefaults()));
-        // @formatter:on
+
+//        RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
+//                .clientId("messaging-client")
+//                .clientSecret("{noop}secret")
+//                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+//                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+//                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+//                .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+//                .redirectUri("http://127.0.0.1:8080/login/oauth2/code/messaging-client-oidc")
+//                .redirectUri("http://127.0.0.1:8080/authorized")
+//                .postLogoutRedirectUri("http://127.0.0.1:8080/logged-out")
+//                .scope(OidcScopes.OPENID)
+//                .scope(OidcScopes.PROFILE)
+//                .scope("message.read")
+//                .scope("message.write")
+//                .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
+//                .build();
+//
+//        registeredClientRepository.save(registeredClient);
+
+
         return http.build();
     }
 
-    // @formatter:off
     @Bean
     public RegisteredClientRepository registeredClientRepository(JdbcTemplate jdbcTemplate) {
         RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
@@ -113,23 +117,13 @@ public class AuthorizationServerConfig {
                 .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
                 .build();
 
-        RegisteredClient deviceClient = RegisteredClient.withId(UUID.randomUUID().toString())
-                .clientId("device-messaging-client")
-                .clientAuthenticationMethod(ClientAuthenticationMethod.NONE)
-                .authorizationGrantType(AuthorizationGrantType.DEVICE_CODE)
-                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                .scope("message.read")
-                .scope("message.write")
-                .build();
-
         // Save registered client's in db as if in-memory
         JdbcRegisteredClientRepository registeredClientRepository = new JdbcRegisteredClientRepository(jdbcTemplate);
         registeredClientRepository.save(registeredClient);
-        registeredClientRepository.save(deviceClient);
 
         return registeredClientRepository;
     }
-    // @formatter:on
+
 
     @Bean
     public OAuth2AuthorizationService authorizationService(JdbcTemplate jdbcTemplate,
